@@ -77,6 +77,24 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
     }
 
     @SuppressWarnings("unused")
+    public String getIssuesTrackerPatternDefault() {
+        return Objects.firstNonNull(getConfig().getIssuesTrackerPatternDefault(), AllureReportPlugin.DEFAULT_ISSUE_TRACKER_PATTERN);
+    }
+
+    public void setIssuesTrackerPatternDefault(String issuesTrackerPatternDefault) {
+        getConfig().setIssuesTrackerPatternDefault(issuesTrackerPatternDefault);
+    }
+
+    @SuppressWarnings("unused")
+    public String getTmsPatternDefault() {
+        return Objects.firstNonNull(getConfig().getTmsPatternDefault(), AllureReportPlugin.DEFAULT_TMS_PATTERN);
+    }
+
+    public void setTmsPatternDefault(String tmsPatternDefault) {
+        getConfig().setTmsPatternDefault(tmsPatternDefault);
+    }
+
+    @SuppressWarnings("unused")
     public FormValidation doResultsPattern(@QueryParameter String resultsPattern) {
         return Strings.isNullOrEmpty(resultsPattern) ?
                 FormValidation.error("Results pattern can't be empty") : FormValidation.ok();
@@ -85,6 +103,15 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
     @Override
     public boolean configure(StaplerRequest req, net.sf.json.JSONObject json) throws FormException {
         setConfig((AllureGlobalConfig) json.toBean(AllureGlobalConfig.class));
+        String issuesTrackerPatternDefaultValue = json.getString("issuesTrackerPatternDefault");
+        if (!Strings.isNullOrEmpty(issuesTrackerPatternDefaultValue)) {
+            setIssuesTrackerPatternDefault(issuesTrackerPatternDefaultValue);
+        }
+        String tmsPatternDefaultValue = json.getString("tmsPatternDefault");
+        if (!Strings.isNullOrEmpty(tmsPatternDefaultValue)) {
+            setTmsPatternDefault(tmsPatternDefaultValue);
+        }
+
         save();
         return true;
     }

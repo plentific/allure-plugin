@@ -11,6 +11,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.remoting.Callable;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 import org.apache.maven.settings.Proxy;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static ru.yandex.qatools.allure.jenkins.AllureReportPlugin.DEFAULT_URL_PATTERN;
 import static ru.yandex.qatools.allure.jenkins.AllureReportPlugin.getReportBuildDirectory;
 import static ru.yandex.qatools.allure.jenkins.utils.GlobDirectoryFinder.findDirectoriesByGlob;
 
@@ -140,7 +142,7 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
                     act(new PropertiesSaver(build.getBuildVariables(), "Build Properties"));
         }
 
-        generateReport(build, allureFilePath, logger);
+        generateReport(build, allureFilePath, launcher, logger);
         publishReport(build, logger);
         deleteRecursive(allureFilePath, logger);
         logger.println("completed");
@@ -202,7 +204,7 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
                     return true;
                 }
 
-                generateReport(build, allureFilePath, logger);
+                generateReport(build, allureFilePath, launcher, logger);
                 publishReport(build, logger);
                 deleteRecursive(allureFilePath, logger);
 
@@ -224,8 +226,30 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
         }
     }
 
-    private void generateReport(AbstractBuild<?, ?> build, FilePath allureFilePath, PrintStreamWrapper logger)
+    private void generateReport(AbstractBuild<?, ?> build, FilePath allureFilePath, Launcher launcher, PrintStreamWrapper logger)
             throws IOException, InterruptedException {
+
+        // configuring external links
+        final String issuesTrackerPatternDefault = getDescriptor().getIssuesTrackerPatternDefault();
+        final String tmsPatternDefault = getDescriptor().getTmsPatternDefault();
+
+        // This code will be run on machine where project is being built (slave or master)
+        Callable<String, IOException> task = new Callable<String, IOException>() {
+            public String call() throws IOException {
+
+                // Jenkins (non default) settings override Allure settings
+                if (!DEFAULT_URL_PATTERN.equals(issuesTrackerPatternDefault)) {
+                    System.setProperty("allure.issues.tracker.pattern", issuesTrackerPatternDefault);
+                }
+
+                // Jenkins (non default) settings override Allure settings
+                if (!DEFAULT_URL_PATTERN.equals(tmsPatternDefault)) {
+                    System.setProperty("allure.tests.management.pattern", tmsPatternDefault);
+                }
+                return "";
+            }
+        };
+        launcher.getChannel().call(task);
 
         logger.println("generate report from directory [%s]", allureFilePath);
         FilePath reportFilePath = new FilePath(getReportBuildDirectory(build));
