@@ -9,6 +9,12 @@
         <f:entry title="Default Report Version" field="reportVersionDefault">
             <f:textbox default="${descriptor.getConfig().getReportVersionDefault()}" style="width: 90%"/>
         </f:entry>
+        <f:entry title="Default Issues Tracker Pattern" field="issuesTrackerPatternDefault">
+            <f:textbox default="${descriptor.getIssuesTrackerPatternDefault()}" style="width: 90%"/>
+        </f:entry>
+        <f:entry title="Default TMS Pattern" field="tmsPatternDefault">
+            <f:textbox default="${descriptor.getTmsPatternDefault()}" style="width: 90%"/>
+        </f:entry>
 
     </f:section>
 </j:jelly>
