@@ -16,8 +16,6 @@ public class AllureGlobalConfig implements Serializable {
 
     private String tmsPatternDefault;
 
-    private ProxySettingsConfig proxySettings;
-
     public String getResultsPatternDefault() {
         return resultsPatternDefault;
     }
@@ -48,14 +46,6 @@ public class AllureGlobalConfig implements Serializable {
 
     public void setTmsPatternDefault(String tmsPatternDefault) {
         this.tmsPatternDefault = tmsPatternDefault;
-    }
-
-    public ProxySettingsConfig getProxySettings() {
-        return proxySettings;
-    }
-
-    public void setProxySettings(ProxySettingsConfig proxySettings) {
-        this.proxySettings = proxySettings;
     }
 
     public static AllureGlobalConfig newInstance(String resultsPatternDefault, String reportVersionDefault) {
