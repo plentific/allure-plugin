@@ -16,19 +16,19 @@ This plugin allows to automatically generate [Allure report](http://allure.qatoo
  2. Ensure that [Allure XML files](https://github.com/allure-framework/allure-core/wiki#gathering-information-about-tests) are generated during the build
  3. Add **Allure Report Generation** post build action
 
-![configuration](https://raw.githubusercontent.com/allure-framework/allure-jenkins-plugin/master/img/allure-configuration.png)
+![configuration](/img/allure-configuration.png)
 
 ## Usage
 When build is finished a link to Allure report will appear on the build page:
 
-![configuration](https://raw.githubusercontent.com/allure-framework/allure-jenkins-plugin/master/img/allure-sidebar.png)
-![configuration](https://raw.githubusercontent.com/allure-framework/allure-jenkins-plugin/master/img/allure-report.png)
+![configuration](/img/allure-sidebar.png)
+![configuration](/img/allure-report.png)
 
 ## Default Settings
  1. Open Jenkins global configuration
  2. Find **Allure Settings** configuration block
  
-![configuration](https://raw.githubusercontent.com/allure-framework/allure-jenkins-plugin/master/img/allure-settings.png)
+![configuration](/img/allure-settings.png)
 
 ## Proxy
 
