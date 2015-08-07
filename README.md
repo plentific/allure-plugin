@@ -31,11 +31,23 @@ When build is finished a link to Allure report will appear on the build page:
 ![configuration](/img/allure-settings.png)
 
 ## Proxy
-
 According to https://wiki.jenkins-ci.org/display/JENKINS/JenkinsBehindProxy
-
 1. Run Jenkins with parameters `java -Dhttp.proxyHost=some.proxy.host -Dhttp.proxyPort=1234 -jar jenkins.war`.
 2. Or edit `/etc/defaults/jenkins` file with same parameters.
+
+## DSL Extension signature
+```groovy
+publishers {
+    allure(String pattern)
+    allure(String pattern) {
+        reportVersion(String version)
+        buildFor(String buildPolicy)
+        includeProperties(boolean includeProperties)
+    }
+}
+```
+
+```buildPolicy``` can be one of ```ALWAYS```, ```UNSTABLE``` or ```FAILURE```
 
 ## Development
 To build the plugin you need to have any JDK 1.7+ and [Apache Maven](http://maven.apache.org/).

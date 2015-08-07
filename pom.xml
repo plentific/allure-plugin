@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.560</version>
+        <version>1.565</version>
     </parent>
 
     <groupId>ru.yandex.qatools.allure</groupId>
@@ -113,6 +113,18 @@
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-spi</artifactId>
             <version>1.0.0.v20140518</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>job-dsl</artifactId>
+            <version>1.35</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>matrix-project</artifactId>
+            <version>1.4</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
