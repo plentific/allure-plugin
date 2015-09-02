@@ -2,9 +2,11 @@ package ru.yandex.qatools.allure.jenkins.utils;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
+import jenkins.security.Roles;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.SettingsBuildingException;
+import org.jenkinsci.remoting.RoleChecker;
 import ru.yandex.qatools.allure.report.AllureReportBuilder;
 import ru.yandex.qatools.clay.Aether;
 import ru.yandex.qatools.clay.maven.settings.FluentSettingsBuilder;
@@ -35,6 +37,11 @@ public class ReportGenerator implements FilePath.FileCallable<FilePath> {
     public ReportGenerator(String reportVersion, Proxy proxy) {
         this.reportVersion = reportVersion;
         this.proxy = proxy;
+    }
+
+    @Override
+    public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+        roleChecker.check(this, Roles.SLAVE);
     }
 
     @Override

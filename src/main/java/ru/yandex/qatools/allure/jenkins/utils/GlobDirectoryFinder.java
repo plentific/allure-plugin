@@ -2,7 +2,9 @@ package ru.yandex.qatools.allure.jenkins.utils;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
+import jenkins.security.Roles;
 import org.apache.tools.ant.DirectoryScanner;
+import org.jenkinsci.remoting.RoleChecker;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,11 @@ public class GlobDirectoryFinder implements FilePath.FileCallable<List<FilePath>
     }
 
     @Override
+    public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+        roleChecker.check(this, Roles.SLAVE);
+    }
+
+    @Override
     public List<FilePath> invoke(File file, VirtualChannel channel) throws IOException, InterruptedException {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(file);
@@ -51,4 +58,5 @@ public class GlobDirectoryFinder implements FilePath.FileCallable<List<FilePath>
     public static GlobDirectoryFinder findDirectoriesByGlob(String glob) {
         return new GlobDirectoryFinder(glob);
     }
+
 }
