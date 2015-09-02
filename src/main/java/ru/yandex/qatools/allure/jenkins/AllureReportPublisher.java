@@ -21,6 +21,7 @@ import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
 import ru.yandex.qatools.allure.jenkins.config.ReportVersionPolicy;
 import ru.yandex.qatools.allure.jenkins.utils.PrintStreamWrapper;
 import ru.yandex.qatools.allure.jenkins.utils.PropertiesSaver;
+import ru.yandex.qatools.allure.jenkins.utils.PropertiesSettter;
 import ru.yandex.qatools.allure.jenkins.utils.ProxyBuilder;
 import ru.yandex.qatools.allure.jenkins.utils.ReportGenerator;
 
@@ -234,23 +235,7 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
         final String issuesTrackerPatternDefault = getDescriptor().getIssuesTrackerPatternDefault();
         final String tmsPatternDefault = getDescriptor().getTmsPatternDefault();
 
-        // This code will be run on machine where project is being built (slave or master)
-        Callable<String, IOException> task = new Callable<String, IOException>() {
-            public String call() throws IOException {
-
-                // Jenkins (non default) settings override Allure settings
-                if (!DEFAULT_URL_PATTERN.equals(issuesTrackerPatternDefault)) {
-                    System.setProperty("allure.issues.tracker.pattern", issuesTrackerPatternDefault);
-                }
-
-                // Jenkins (non default) settings override Allure settings
-                if (!DEFAULT_URL_PATTERN.equals(tmsPatternDefault)) {
-                    System.setProperty("allure.tests.management.pattern", tmsPatternDefault);
-                }
-                return "";
-            }
-        };
-        launcher.getChannel().call(task);
+        launcher.getChannel().call(new PropertiesSettter(issuesTrackerPatternDefault, tmsPatternDefault));
 
         logger.println("generate report from directory [%s]", allureFilePath);
         FilePath reportFilePath = new FilePath(getReportBuildDirectory(build));
