@@ -13,10 +13,6 @@ import jenkins.model.Jenkins;
  */
 public class AllureReportPlugin extends Plugin {
 
-    public static final String TITLE = "Allure Report";
-
-    public static final String DESCRIPTION = "Allure Report Generation";
-
     public static final String URL_PATH = "allure";
 
     public static final String REPORT_PATH = "allure-report";
@@ -48,7 +44,7 @@ public class AllureReportPlugin extends Plugin {
     }
 
     public static String getTitle() {
-        return TITLE;
+        return Messages.AllureReportPlugin_Title();
     }
 
     public static String getIconFilename() {
