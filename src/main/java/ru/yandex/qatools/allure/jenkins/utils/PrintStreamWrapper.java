@@ -1,6 +1,7 @@
 package ru.yandex.qatools.allure.jenkins.utils;
 
 import ru.yandex.qatools.allure.jenkins.AllureReportPlugin;
+import ru.yandex.qatools.allure.jenkins.Messages;
 
 import java.io.PrintStream;
 
@@ -10,7 +11,7 @@ import java.io.PrintStream;
  */
 public class PrintStreamWrapper {
 
-    public static final String PREFIX = AllureReportPlugin.DESCRIPTION;
+    public static final String PREFIX = Messages.AllureReportPublisher_DisplayName();
 
     private PrintStream printStream;
 

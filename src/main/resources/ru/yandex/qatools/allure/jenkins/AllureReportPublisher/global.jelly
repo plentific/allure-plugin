@@ -1,18 +1,18 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <f:section title="Allure Plugin">
+    <f:section title="${descriptor.getDisplayName()}">
 
-        <f:entry title="Default Results Directories" field="resultsPatternDefault">
+        <f:entry title="${%Results}" field="resultsPatternDefault">
             <f:textbox default="${descriptor.getConfig().getResultsPatternDefault()}" style="width: 90%"/>
         </f:entry>
-        <f:entry title="Default Report Version" field="reportVersionDefault">
+        <f:entry title="${%Version}" field="reportVersionDefault">
             <f:textbox default="${descriptor.getConfig().getReportVersionDefault()}" style="width: 90%"/>
         </f:entry>
-        <f:entry title="Default Issues Tracker Pattern" field="issuesTrackerPatternDefault">
+        <f:entry title="${%IssuePattern}" field="issuesTrackerPatternDefault">
             <f:textbox default="${descriptor.getIssuesTrackerPatternDefault()}" style="width: 90%"/>
         </f:entry>
-        <f:entry title="Default TMS Pattern" field="tmsPatternDefault">
+        <f:entry title="${%TmsPattern}" field="tmsPatternDefault">
             <f:textbox default="${descriptor.getTmsPatternDefault()}" style="width: 90%"/>
         </f:entry>
 

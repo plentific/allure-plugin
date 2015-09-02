@@ -37,7 +37,7 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
 
     @Override
     public String getDisplayName() {
-        return AllureReportPlugin.DESCRIPTION;
+        return Messages.AllureReportPublisher_DisplayName();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
     @SuppressWarnings("unused")
     public FormValidation doResultsPattern(@QueryParameter String resultsPattern) {
         return Strings.isNullOrEmpty(resultsPattern) ?
-                FormValidation.error("Results pattern can't be empty") : FormValidation.ok();
+                FormValidation.error(Messages.AllureReportPublisher_EmptyResultsError()) : FormValidation.ok();
     }
 
     @Override
