@@ -25,9 +25,11 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
     private AllureGlobalConfig config;
 
     @Deprecated
+    @SuppressWarnings("unused")
     private String reportVersionDefault;
 
     @Deprecated
+    @SuppressWarnings("unused")
     private String resultsPatternDefault;
 
     public AllureReportPublisherDescriptor() {

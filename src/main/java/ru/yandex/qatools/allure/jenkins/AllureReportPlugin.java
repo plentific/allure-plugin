@@ -37,6 +37,7 @@ public class AllureReportPlugin extends Plugin {
 
     public static final String DEFAULT_TMS_PATTERN = DEFAULT_URL_PATTERN;
 
+    @SuppressWarnings("deprecation")
     public static File getReportBuildDirectory(AbstractBuild<?, ?> build) {
         if (build != null) {
             File oldReportPath = new File(build.getRootDir(), REPORT_PATH_OLD);
