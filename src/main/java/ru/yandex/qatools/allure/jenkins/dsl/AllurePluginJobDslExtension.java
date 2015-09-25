@@ -16,7 +16,7 @@ public class AllurePluginJobDslExtension extends ContextExtensionPoint {
 
     @DslExtensionMethod(context = PublisherContext.class)
     public Object allure(String resultsPattern) {
-        return new AllureReportPublisher(AllureReportConfig.newInstance(resultsPattern, true));
+        return new AllureReportPublisher(AllureReportConfig.newInstance(resultsPattern));
     }
 
     @DslExtensionMethod(context = PublisherContext.class)
@@ -25,14 +25,6 @@ public class AllurePluginJobDslExtension extends ContextExtensionPoint {
         AllureReportPublisherContext context = new AllureReportPublisherContext(resultsPattern);
         executeInContext(closure, context);
 
-        AllureReportConfig config = new AllureReportConfig(
-                context.getResultsPattern(),
-                context.getReportVersionCustom(),
-                context.getReportVersionPolicy(),
-                context.getReportBuildPolicy(),
-                context.getIncludeProperties()
-        );
-
-        return new AllureReportPublisher(config);
+        return new AllureReportPublisher(context.getConfig());
     }
 }
