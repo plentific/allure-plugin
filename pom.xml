@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.580.3</version>
+        <version>1.580.1</version>
     </parent>
 
     <groupId>ru.yandex.qatools.allure</groupId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>job-dsl</artifactId>
-            <version>1.35</version>
+            <version>1.39</version>
             <optional>true</optional>
         </dependency>
         <dependency>

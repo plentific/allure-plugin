@@ -15,8 +15,6 @@ import org.jvnet.hudson.test.JenkinsRule;
 import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -24,21 +22,41 @@ import static org.junit.Assert.assertThat;
  */
 public class DslIntegrationTest {
 
-    public static final String JOB_NAME_IN_DSL_SCRIPT = "allure";
-    public static final String CONDUCTOR_DSL_GROOVY = "allure.groovy";
+    public static final String JOB_NAME = "allure";
+    public static final String SCRIPT_NAME = "allure.groovy";
 
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
 
     @Test
-    public void shouldCreateJobWithExtendedDsl() throws Exception {
+    public void shouldCreateJobWithDsl() throws Exception {
+        buildJob(SCRIPT_NAME);
+
+        assertThat(jenkins.getInstance().getJobNames(), hasItem(is(JOB_NAME)));
+        FreeStyleProject generated = jenkins.getInstance()
+                .getItemByFullName(JOB_NAME, FreeStyleProject.class);
+
+        DescribableList<Publisher, Descriptor<Publisher>> publisher = generated.getPublishersList();
+
+        assertThat("Should add step", publisher, hasSize(1));
+        assertThat("Should contains complex report publisher",
+                publisher.get(0), instanceOf(AllureReportPublisher.class));
+        AllureReportPublisher allureReportPublisher = (AllureReportPublisher) publisher.get(0);
+
+        assertThat(allureReportPublisher.getConfig().getResultsPaths(),
+                hasItems("target/first-results", "target/second-results"));
+        assertThat(allureReportPublisher.getConfig().getReportBuildPolicy(), equalTo(ReportBuildPolicy.UNSTABLE));
+        assertThat(allureReportPublisher.getConfig().getIncludeProperties(), equalTo(Boolean.TRUE));
+    }
+
+    private FreeStyleProject buildJob(String script) throws Exception {
         FreeStyleProject job = jenkins.createFreeStyleProject();
         job.getBuildersList().add(
                 new ExecuteDslScripts(
                         new ExecuteDslScripts.ScriptLocation(
                                 null, null,
                                 IOUtils.toString(this
-                                        .getClass().getClassLoader().getResourceAsStream(CONDUCTOR_DSL_GROOVY))
+                                        .getClass().getClassLoader().getResourceAsStream(script))
                         ),
                         false,
                         RemovedJobAction.DELETE,
@@ -48,21 +66,6 @@ public class DslIntegrationTest {
         );
 
         jenkins.buildAndAssertSuccess(job);
-
-        assertThat(jenkins.getInstance().getJobNames(), hasItem(is(JOB_NAME_IN_DSL_SCRIPT)));
-
-        FreeStyleProject generated = jenkins.getInstance()
-                .getItemByFullName(JOB_NAME_IN_DSL_SCRIPT, FreeStyleProject.class);
-
-        DescribableList<Publisher, Descriptor<Publisher>> publisher = generated.getPublishersList();
-
-        assertThat("Should add step", publisher, hasSize(1));
-        assertThat("Should contains allure report publisher",
-                publisher.get(0), instanceOf(AllureReportPublisher.class));
-        AllureReportPublisher allureReportPublisher = (AllureReportPublisher) publisher.get(0);
-
-        assertThat(allureReportPublisher.getConfig().getResultsPattern(), equalTo("target/allure-results"));
-        assertThat(allureReportPublisher.getConfig().getReportBuildPolicy(), equalTo(ReportBuildPolicy.UNSTABLE));
-        assertThat(allureReportPublisher.getConfig().getIncludeProperties(), equalTo(Boolean.TRUE));
+        return job;
     }
 }
