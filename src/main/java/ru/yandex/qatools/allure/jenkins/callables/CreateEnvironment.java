@@ -48,6 +48,11 @@ public class CreateEnvironment extends MasterToSlaveFileCallable<FilePath> {
         }
 
         Path environmentPath = Paths.get(file.getAbsolutePath()).resolve(ENVIRONMENT_FILE_NAME);
+
+        if (Files.notExists(environmentPath.getParent())) {
+            Files.createDirectories(environmentPath.getParent());
+        }
+
         if (Files.notExists(environmentPath)) {
             Files.createFile(environmentPath);
         }

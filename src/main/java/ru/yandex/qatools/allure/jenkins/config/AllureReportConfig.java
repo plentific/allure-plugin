@@ -1,8 +1,11 @@
 package ru.yandex.qatools.allure.jenkins.config;
 
+import com.google.common.base.Joiner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -27,8 +30,8 @@ public class AllureReportConfig implements Serializable {
                               ReportBuildPolicy reportBuildPolicy, Boolean includeProperties) {
         this.jdk = jdk;
         this.commandline = commandline;
-        this.reportBuildPolicy = reportBuildPolicy;
         this.resultsPattern = resultsPattern;
+        this.reportBuildPolicy = reportBuildPolicy;
         this.includeProperties = includeProperties;
     }
 
@@ -57,6 +60,10 @@ public class AllureReportConfig implements Serializable {
         return resultsPattern;
     }
 
+    public List<String> getResultsPaths() {
+        return Arrays.asList(resultsPattern.split("\\n"));
+    }
+
     public ReportBuildPolicy getReportBuildPolicy() {
         return reportBuildPolicy;
     }
@@ -73,7 +80,13 @@ public class AllureReportConfig implements Serializable {
         this.includeProperties = includeProperties;
     }
 
-    public static AllureReportConfig newInstance(String resultsMask) {
-        return new AllureReportConfig(null, null, resultsMask, ReportBuildPolicy.ALWAYS, true);
+    public static AllureReportConfig newInstance(String paths) {
+        return new AllureReportConfig(null, null, paths, ReportBuildPolicy.ALWAYS, true);
     }
+
+    public static AllureReportConfig newInstance(List<String> paths) {
+        return new AllureReportConfig(null, null, Joiner.on("\n").join(paths), ReportBuildPolicy.ALWAYS, true);
+    }
+
+
 }

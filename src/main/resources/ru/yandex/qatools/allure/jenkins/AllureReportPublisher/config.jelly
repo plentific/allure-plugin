@@ -2,10 +2,10 @@
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
     <f:section name="config">
-        <f:entry title="${%Results}:" field="resultsPattern">
-            <f:textbox default="${descriptor.getResultsPatternDefault()}"
-                       value="${instance.getConfig().getResultsPattern()}"
-                       style="width: 90%"/>
+        <f:entry title="${%Results}:" field="resultsPattern" description="${%ResultsDescription}">
+            <f:textarea default="${descriptor.getResultsPatternDefault()}"
+                        value="${instance.getConfig().getResultsPattern()}"
+                        style="width: 90%"/>
         </f:entry>
         <j:set var="installations" value="${descriptor.getCommandlineInstallations()}"/>
         <f:entry>
@@ -16,8 +16,8 @@
             </j:if>
         </f:entry>
         <f:advanced>
-            <f:entry title="${%Commandline}:" help="/plugin/allure/help-bundle-installation.html">
-                <j:if test="${installations.size() > 0}">
+            <j:if test="${installations.size() > 1}">
+                <f:entry title="${%Commandline}:">
                     <select class="setting-input" style="width: 90%" name="commandline">
                         <j:forEach var="inst" items="${installations}">
                             <f:option selected="${inst.name==instance.getConfig().getCommandline()}"
@@ -26,10 +26,10 @@
                             </f:option>
                         </j:forEach>
                     </select>
-                </j:if>
-            </f:entry>
+                </f:entry>
+            </j:if>
             <j:set var="jdks" value="${app.JDKs}"/>
-            <f:entry title="JDK" description="${%JDK}">
+            <f:entry title="JDK" description="${%JDKDescription}">
                 <select class="setting-input" style="width: 90%" name="jdk">
                     <option value="">${%InheritFromJob}</option>
                     <j:forEach var="inst" items="${jdks}">

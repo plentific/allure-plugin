@@ -1,7 +1,7 @@
 freeStyleJob('allure') {
 
     publishers {
-        allure('target/allure-results') {
+        allure(['target/first-results', 'target/second-results']) {
             buildFor('UNSTABLE')
             includeProperties(true)
         }

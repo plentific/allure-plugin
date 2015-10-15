@@ -13,8 +13,8 @@ class AllureReportPublisherContext implements Context {
 
     private AllureReportConfig config;
 
-    public AllureReportPublisherContext(String resultsPattern) {
-        config = new AllureReportConfig(null, null, resultsPattern, ReportBuildPolicy.ALWAYS, true);
+    public AllureReportPublisherContext(AllureReportConfig config) {
+        this.config = config;
     }
 
     public AllureReportConfig getConfig() {
