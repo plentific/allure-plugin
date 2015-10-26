@@ -2,6 +2,7 @@ package ru.yandex.qatools.allure.jenkins.dsl;
 
 import javaposse.jobdsl.dsl.Context;
 import ru.yandex.qatools.allure.jenkins.config.AllureReportConfig;
+import ru.yandex.qatools.allure.jenkins.config.PropertyConfig;
 import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
 
 /**
@@ -32,6 +33,10 @@ class AllureReportPublisherContext implements Context {
 
     public void commandline(String commandline) {
         getConfig().setCommandline(commandline);
+    }
+
+    public void property(String key, String value) {
+        getConfig().getProperties().add(new PropertyConfig(key, value));
     }
 
     public void includeProperties(boolean includeProperties) {
