@@ -69,6 +69,9 @@ public class AllureReportConfig implements Serializable {
     }
 
     public List<PropertyConfig> getProperties() {
+        if (properties == null) {
+            properties = new ArrayList<>();
+        }
         return properties;
     }
 
