@@ -1,6 +1,6 @@
 # Allure Jenkins Plugin
 
-[![release](http://github-release-version.herokuapp.com/github/jenkinsci/allure-plugin/release.svg?style=flat)](https://github.com/jenkinsci/allure-plugin/releases/latest) [![build](https://img.shields.io/jenkins/s/http/ci.qatools.ru/allure-plugin_master-deploy.svg?style=flat)](http://ci.qatools.ru/job/allure-plugin_master-deploy/lastBuild/)
+[![release](http://github-release-version.herokuapp.com/github/jenkinsci/allure-plugin/release.svg?style=flat)](https://github.com/jenkinsci/allure-plugin/releases/latest) [![build](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/allure-plugin)](https://jenkins.ci.cloudbees.com/job/plugins/job/allure-plugin/)
 
 ## Getting Started
 
