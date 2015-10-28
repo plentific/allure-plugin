@@ -4,6 +4,7 @@ import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 import ru.yandex.qatools.allure.jenkins.Messages;
+import ru.yandex.qatools.allure.jenkins.config.PropertyConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -24,6 +26,10 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
 
     public CreateConfig(Properties properties) {
         this.properties = properties;
+    }
+
+    public CreateConfig(List<PropertyConfig> propertyConfigs) {
+        this.properties = convert(propertyConfigs);
     }
 
     @Override
@@ -40,4 +46,11 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         return new FilePath(configPath.toFile());
     }
 
+    private Properties convert (List<PropertyConfig> propertyConfigs) {
+        Properties result = new Properties();
+        for (PropertyConfig propertyConfig: propertyConfigs) {
+            result.put(propertyConfig.getKey(), propertyConfig.getValue());
+        }
+        return result;
+    }
 }

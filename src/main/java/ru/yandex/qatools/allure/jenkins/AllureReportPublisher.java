@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static ru.yandex.qatools.allure.jenkins.AllureReportPlugin.REPORT_PATH;
 import static ru.yandex.qatools.allure.jenkins.AllureReportPlugin.getMasterReportFilePath;
@@ -65,9 +64,8 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
     }
 
     public AllureReportConfig getConfig() {
-        return config == null ? AllureReportConfig.newInstance(getDescriptor().getResultsPatternDefault()) : config;
+        return config == null ? AllureReportConfig.newInstance() : config;
     }
-
 
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
@@ -172,16 +170,14 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
                     build.getProject().getAbsoluteUrl(), buildVars));
 
 
-            FilePath configDirectory = tmpDirectory.child(CONFIG_PATH);
-            String issuePattern = getDescriptor().getIssuesTrackerPatternDefault();
-            String tmsPattern = getDescriptor().getTmsPatternDefault();
-            configDirectory.act(new CreateConfig(prepareProperties(issuePattern, tmsPattern)));
+            FilePath configFile = tmpDirectory.child(CONFIG_PATH)
+                    .act(new CreateConfig(getConfig().getProperties()));
 
             EnvVars buildEnv = build.getEnvironment(listener);
             configureJDK(buildEnv, build.getProject());
 
             buildEnv.put("ALLURE_HOME", commandline.getHome());
-            buildEnv.put("ALLURE_CONFIG", configDirectory.getRemote());
+            buildEnv.put("ALLURE_CONFIG", configFile.getRemote());
 
             // create tmp report path
             FilePath reportDirectory = tmpDirectory.child(REPORT_PATH);
@@ -233,13 +229,6 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
             return project.getJDK();
         }
         return null;
-    }
-
-    private Properties prepareProperties(String issuePattern, String tmsPattern) {
-        Properties properties = new Properties();
-        properties.put("allure.issues.tracker.pattern", issuePattern);
-        properties.put("allure.tests.management.pattern", tmsPattern);
-        return properties;
     }
 
     private FilePath getAggregationResultDirectory(AbstractBuild<?, ?> build) {

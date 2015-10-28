@@ -45,8 +45,15 @@ public class DslIntegrationTest {
 
         assertThat(allureReportPublisher.getConfig().getResultsPaths(),
                 hasItems("target/first-results", "target/second-results"));
+
+        assertThat(allureReportPublisher.getConfig().getProperties(), hasSize(1));
+        assertThat(allureReportPublisher.getConfig().getProperties().get(0).getKey(), equalTo("key"));
+        assertThat(allureReportPublisher.getConfig().getProperties().get(0).getValue(), equalTo("value"));
+
         assertThat(allureReportPublisher.getConfig().getReportBuildPolicy(), equalTo(ReportBuildPolicy.UNSTABLE));
         assertThat(allureReportPublisher.getConfig().getIncludeProperties(), equalTo(Boolean.TRUE));
+
+
     }
 
     private FreeStyleProject buildJob(String script) throws Exception {
