@@ -46,9 +46,15 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
 
     @SuppressWarnings("unused")
     public FormValidation doResultsPattern(@QueryParameter("results") String results) {
-        return Strings.isNullOrEmpty(results)
-                ? FormValidation.error(Messages.AllureReportPublisher_EmptyResultsError())
-                : FormValidation.ok();
+        if (Strings.isNullOrEmpty(results)) {
+            return FormValidation.error(Messages.AllureReportPublisher_EmptyResultsError());
+        }
+
+        if (results.contains("**")) {
+            return FormValidation.error(Messages.AllureReportPublisher_GlobSyntaxNotSupportedAnymore());
+        }
+
+        return FormValidation.ok();
     }
 
     @SuppressWarnings("unused")
