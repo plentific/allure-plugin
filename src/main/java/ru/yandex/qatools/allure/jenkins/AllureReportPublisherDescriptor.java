@@ -33,7 +33,7 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
 
     public AllureGlobalConfig getConfig() {
         if (config == null) {
-            return config = AllureGlobalConfig.newInstance();
+            config = AllureGlobalConfig.newInstance();
         }
         return config;
     }
