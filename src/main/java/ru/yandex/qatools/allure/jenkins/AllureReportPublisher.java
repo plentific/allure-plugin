@@ -171,7 +171,7 @@ public class AllureReportPublisher extends Recorder implements Serializable, Mat
 
 
             FilePath configFile = tmpDirectory.child(CONFIG_PATH)
-                    .act(new CreateConfig(getConfig().getProperties()));
+                    .act(new CreateConfig(getDescriptor().getConfig().getProperties(), getConfig().getProperties()));
 
             EnvVars buildEnv = build.getEnvironment(listener);
             configureJDK(buildEnv, build.getProject());

@@ -28,8 +28,11 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         this.properties = properties;
     }
 
-    public CreateConfig(List<PropertyConfig> propertyConfigs) {
-        this.properties = convert(propertyConfigs);
+    public CreateConfig(List<PropertyConfig> globalProperties, List<PropertyConfig> jobProperties) {
+        Properties properties = new Properties();
+        properties.putAll(convert(globalProperties));
+        properties.putAll(convert(jobProperties));
+        this.properties = properties;
     }
 
     @Override
