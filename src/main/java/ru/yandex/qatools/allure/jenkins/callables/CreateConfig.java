@@ -28,8 +28,8 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         this.properties = properties;
     }
 
-    public CreateConfig(List<PropertyConfig> propertyConfigs) {
-        this.properties = convert(propertyConfigs);
+    public CreateConfig(List<PropertyConfig> globalProperties, List<PropertyConfig> jobProperties) {
+        this.properties = merge(globalProperties, jobProperties);
     }
 
     @Override
@@ -46,9 +46,16 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         return new FilePath(configPath.toFile());
     }
 
-    private Properties convert (List<PropertyConfig> propertyConfigs) {
+    private Properties merge(List<PropertyConfig> first, List<PropertyConfig> second) {
+        Properties propertiesToMerge = new Properties();
+        propertiesToMerge.putAll(convert(first));
+        propertiesToMerge.putAll(convert(second));
+        return propertiesToMerge;
+    }
+
+    private Properties convert(List<PropertyConfig> propertyConfigs) {
         Properties result = new Properties();
-        for (PropertyConfig propertyConfig: propertyConfigs) {
+        for (PropertyConfig propertyConfig : propertyConfigs) {
             result.put(propertyConfig.getKey(), propertyConfig.getValue());
         }
         return result;
