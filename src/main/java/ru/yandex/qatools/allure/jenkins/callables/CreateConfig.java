@@ -7,6 +7,7 @@ import ru.yandex.qatools.allure.jenkins.Messages;
 import ru.yandex.qatools.allure.jenkins.config.PropertyConfig;
 
 import java.io.File;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -41,8 +42,10 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         if (Files.notExists(configPath)) {
             Files.createFile(configPath);
         }
-        properties.store(Files.newBufferedWriter(configPath, Charset.forName("UTF-8")),
+		BufferedWriter writer1=Files.newBufferedWriter(configPath, Charset.forName("UTF-8"));
+        properties.store(writer1,
                 Messages.CreateConfig_Comment());
+		writer1.close();
         return new FilePath(configPath.toFile());
     }
 
