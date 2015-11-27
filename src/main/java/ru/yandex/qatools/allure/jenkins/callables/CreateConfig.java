@@ -42,10 +42,9 @@ public class CreateConfig extends MasterToSlaveFileCallable<FilePath> {
         if (Files.notExists(configPath)) {
             Files.createFile(configPath);
         }
-		BufferedWriter writer1=Files.newBufferedWriter(configPath, Charset.forName("UTF-8"));
-        properties.store(writer1,
-                Messages.CreateConfig_Comment());
-		writer1.close();
+        try (BufferedWriter writer = Files.newBufferedWriter(configPath, Charset.forName("UTF-8"))) {
+            properties.store(writer, Messages.CreateConfig_Comment());
+        }
         return new FilePath(configPath.toFile());
     }
 
