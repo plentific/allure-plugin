@@ -3,12 +3,15 @@ package ru.yandex.qatools.allure.jenkins.callables;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
+import ru.yandex.qatools.allure.jenkins.Messages;
 import ru.yandex.qatools.commons.model.Environment;
 import ru.yandex.qatools.commons.model.Parameter;
 
 import javax.xml.bind.JAXB;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +35,7 @@ public class CreateEnvironment extends MasterToSlaveFileCallable<FilePath> {
     public CreateEnvironment(int number, String name, String projectUrl, Map<String, String> parameters) {
         this.parameters = parameters;
         this.projectUrl = projectUrl;
-        this.id = number + "";
+        this.id = Integer.toString(number);
         this.name = name;
     }
 
@@ -56,7 +59,9 @@ public class CreateEnvironment extends MasterToSlaveFileCallable<FilePath> {
         if (Files.notExists(environmentPath)) {
             Files.createFile(environmentPath);
         }
-        JAXB.marshal(environment, environmentPath.toFile());
+        try (BufferedWriter writer = Files.newBufferedWriter(environmentPath, Charset.forName("UTF-8"))) {
+            JAXB.marshal(writer, Messages.CreateConfig_Comment());
+        }
         return new FilePath(environmentPath.toFile());
     }
 
