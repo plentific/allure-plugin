@@ -13,7 +13,7 @@
     <name>Allure Jenkins Plugin</name>
     <packaging>hpi</packaging>
 
-    <version>2.10</version>
+    <version>2.11-SNAPSHOT</version>
 
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Allure+Plugin</url>
 
@@ -63,7 +63,7 @@
         <connection>scm:git:https://github.com/jenkinsci/allure-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/allure-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/allure-plugin</url>
-        <tag>allure-jenkins-plugin-2.10</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
