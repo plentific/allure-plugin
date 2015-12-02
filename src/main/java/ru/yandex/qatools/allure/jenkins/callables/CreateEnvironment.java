@@ -3,7 +3,6 @@ package ru.yandex.qatools.allure.jenkins.callables;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
-import ru.yandex.qatools.allure.jenkins.Messages;
 import ru.yandex.qatools.commons.model.Environment;
 import ru.yandex.qatools.commons.model.Parameter;
 
@@ -60,7 +59,7 @@ public class CreateEnvironment extends MasterToSlaveFileCallable<FilePath> {
             Files.createFile(environmentPath);
         }
         try (BufferedWriter writer = Files.newBufferedWriter(environmentPath, Charset.forName("UTF-8"))) {
-            JAXB.marshal(writer, Messages.CreateConfig_Comment());
+            JAXB.marshal(environment, writer);
         }
         return new FilePath(environmentPath.toFile());
     }
