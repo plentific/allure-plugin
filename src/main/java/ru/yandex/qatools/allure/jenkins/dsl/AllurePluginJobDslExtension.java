@@ -13,16 +13,15 @@ import java.util.List;
  * @author Marat Mavlutov <mavlyutov@yandex-team.ru>
  */
 @Extension(optional = true)
-@SuppressWarnings("unused")
 public class AllurePluginJobDslExtension extends ContextExtensionPoint {
 
     @DslExtensionMethod(context = PublisherContext.class)
-    public Object allure(List paths) {
+    public Object allure(List<String> paths) {
         return new AllureReportPublisher(AllureReportConfig.newInstance(paths));
     }
 
     @DslExtensionMethod(context = PublisherContext.class)
-    public Object allure(List paths, Runnable closure) {
+    public Object allure(List<String> paths, Runnable closure) {
 
         AllureReportPublisherContext context = new AllureReportPublisherContext(AllureReportConfig.newInstance(paths));
         executeInContext(closure, context);

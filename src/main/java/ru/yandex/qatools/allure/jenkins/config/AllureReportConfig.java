@@ -1,14 +1,14 @@
 package ru.yandex.qatools.allure.jenkins.config;
 
-import com.google.common.base.Joiner;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * eroshenkoam
@@ -20,23 +20,30 @@ public class AllureReportConfig implements Serializable {
 
     private String commandline;
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     private String resultsPattern;
 
     private List<PropertyConfig> properties;
+
+    private List<ResultsConfig> results;
 
     private ReportBuildPolicy reportBuildPolicy;
 
     private Boolean includeProperties;
 
     @DataBoundConstructor
-    public AllureReportConfig(String jdk, String commandline, String resultsPattern, List<PropertyConfig> properties,
-                              ReportBuildPolicy reportBuildPolicy, Boolean includeProperties) {
+    public AllureReportConfig(String jdk, String commandline, List<PropertyConfig> properties,
+                              ReportBuildPolicy reportBuildPolicy, Boolean includeProperties, List<ResultsConfig> results) {
         this.jdk = jdk;
-        this.properties = properties;
         this.commandline = commandline;
-        this.resultsPattern = resultsPattern;
-        this.reportBuildPolicy = reportBuildPolicy;
-        this.includeProperties = includeProperties;
+
+        this.results = results == null ? Collections.<ResultsConfig>emptyList() : results;
+        this.properties = properties == null ? Collections.<PropertyConfig>emptyList() : properties;
+        this.includeProperties = includeProperties == null ? Boolean.FALSE : includeProperties;
+        this.reportBuildPolicy = reportBuildPolicy == null ? ReportBuildPolicy.ALWAYS : reportBuildPolicy;
     }
 
     public String getJdk() {
@@ -47,11 +54,6 @@ public class AllureReportConfig implements Serializable {
         this.jdk = jdk;
     }
 
-    public boolean hasJdk() {
-        return isNotBlank(getJdk());
-    }
-
-
     public String getCommandline() {
         return commandline;
     }
@@ -60,18 +62,17 @@ public class AllureReportConfig implements Serializable {
         this.commandline = commandline;
     }
 
-    public String getResultsPattern() {
-        return resultsPattern;
-    }
-
-    public List<String> getResultsPaths() {
-        return Arrays.asList(resultsPattern.split("\\n"));
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public List<ResultsConfig> getResults() {
+        if (StringUtils.isNotBlank(this.resultsPattern)) {
+            this.results = convertPaths(this.resultsPattern);
+            this.resultsPattern = null;
+        }
+        return results;
     }
 
     public List<PropertyConfig> getProperties() {
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
         return properties;
     }
 
@@ -95,17 +96,29 @@ public class AllureReportConfig implements Serializable {
         this.includeProperties = includeProperties;
     }
 
-    public static AllureReportConfig newInstance() {
-        return new AllureReportConfig(null, null, null, new ArrayList<PropertyConfig>(), ReportBuildPolicy.ALWAYS, true);
-    }
-
-    public static AllureReportConfig newInstance(String paths) {
-        return new AllureReportConfig(null, null, paths, new ArrayList<PropertyConfig>(), ReportBuildPolicy.ALWAYS, true);
-    }
-
     public static AllureReportConfig newInstance(List<String> paths) {
-        return new AllureReportConfig(null, null, Joiner.on("\n").join(paths),
-                new ArrayList<PropertyConfig>(), ReportBuildPolicy.ALWAYS, true);
+        return newInstance(null, null, paths.toArray(new String[]{}));
     }
 
+    public static AllureReportConfig newInstance(String jdk, String commandline, String... paths) {
+        return newInstance(jdk, commandline, Arrays.asList(paths));
+    }
+
+    private static AllureReportConfig newInstance(String jdk, String commandline, List<String> paths) {
+        List<ResultsConfig> results = convertPaths(paths);
+        return new AllureReportConfig(jdk, commandline, new ArrayList<PropertyConfig>(),
+                ReportBuildPolicy.ALWAYS, true, results);
+    }
+
+    private static List<ResultsConfig> convertPaths(String paths) {
+        return convertPaths(Arrays.asList(paths.split("\\n")));
+    }
+
+    private static List<ResultsConfig> convertPaths(List<String> paths) {
+        List<ResultsConfig> results = new ArrayList<>();
+        for (String path : paths) {
+            results.add(new ResultsConfig(path));
+        }
+        return results;
+    }
 }

@@ -11,7 +11,7 @@ import java.io.PrintStream;
  */
 public class FilePathUtils {
 
-    public static final String ALLURE_PREFIX = "allure";
+    private static final String ALLURE_PREFIX = "allure";
 
     private FilePathUtils() {
     }

@@ -6,6 +6,8 @@ import hudson.tools.ToolInstallation;
 import org.kohsuke.stapler.DataBoundConstructor;
 import ru.yandex.qatools.allure.jenkins.Messages;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Artem Eroshenko <eroshenkoam@yandex-team.ru>
  */
@@ -17,11 +19,10 @@ public class AllureCommandlineInstaller extends DownloadFromUrlInstaller {
     }
 
     @Extension
-    @SuppressWarnings("unused")
-    public static final class DescriptorImplementation extends
-            DownloadFromUrlInstaller.DescriptorImpl<AllureCommandlineInstaller> {
+    public static class DescriptorImpl extends DownloadFromUrlInstaller.DescriptorImpl<AllureCommandlineInstaller> { //NOSONAR
 
         @Override
+        @Nonnull
         public String getDisplayName() {
             return Messages.AllureCommandlineInstaller_DisplayName();
         }

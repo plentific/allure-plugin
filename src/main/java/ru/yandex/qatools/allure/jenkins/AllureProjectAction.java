@@ -9,10 +9,12 @@ import hudson.model.ProminentProjectAction;
 
 
 /**
+ * @deprecated
  * {@link Action} that shows link to the allure report on the project page
  *
  * @author pupssman
  */
+@Deprecated
 public class AllureProjectAction implements ProminentProjectAction, StaplerProxy {
     private final AbstractProject<?, ?> project;
 
@@ -38,6 +40,6 @@ public class AllureProjectAction implements ProminentProjectAction, StaplerProxy
     @Override
     public Object getTarget() {
         AbstractBuild<?, ?> build = project.getLastBuild();
-        return build != null ? build.getAction(AllureBuildAction.class) : null;
+        return build == null ? null : build.getAction(AllureBuildAction.class);
     }
 }

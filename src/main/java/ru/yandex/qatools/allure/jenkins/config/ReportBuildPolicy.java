@@ -19,20 +19,20 @@ public enum ReportBuildPolicy {
     UNSTABLE("For all unstable builds", new ReportBuildPolicyDecision() {
         @Override
         public boolean isNeedToBuildReport(Run run) {
-            return run.getResult().equals(Result.UNSTABLE);
+            return run != null && Result.UNSTABLE.equals(run.getResult());
         }
     }),
 
     UNSUCCESSFUL("For unsuccessful builds", new ReportBuildPolicyDecision() {
         @Override
         public boolean isNeedToBuildReport(Run run) {
-            return run.getResult().isWorseOrEqualTo(Result.UNSTABLE);
+            return run != null && Result.UNSTABLE.equals(run.getResult());
         }
     });
 
     private String title;
 
-    private ReportBuildPolicyDecision decision;
+    private ReportBuildPolicyDecision decision; //NOSONAR
 
     ReportBuildPolicy(String title, ReportBuildPolicyDecision decision) {
         this.decision = decision;
