@@ -10,7 +10,7 @@ import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
  */
 class AllureReportPublisherContext implements Context {
 
-    public static final String FAILURE_POLICY = "FAILURE";
+    private static final String FAILURE_POLICY = "FAILURE";
 
     private AllureReportConfig config;
 

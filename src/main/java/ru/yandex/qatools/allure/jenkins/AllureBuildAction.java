@@ -11,10 +11,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
+ * @deprecated
  * {@link Action} that server allure report from archive directory on master of a given build.
  *
  * @author pupssman
  */
+@Deprecated
 public class AllureBuildAction implements BuildBadgeAction {
 
     private final AbstractBuild<?, ?> build;
@@ -44,7 +46,7 @@ public class AllureBuildAction implements BuildBadgeAction {
     }
 
     @SuppressWarnings("unused")
-    public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp)
+    public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp) //NOSONAR
             throws IOException, ServletException, InterruptedException {
         AbstractProject<?, ?> project = build.getProject();
         FilePath systemDirectory = new FilePath(AllureReportPlugin.getReportBuildDirectory(build));

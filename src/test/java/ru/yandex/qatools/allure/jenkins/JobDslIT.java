@@ -12,18 +12,18 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
+import ru.yandex.qatools.allure.jenkins.config.PropertyConfig;
+import ru.yandex.qatools.allure.jenkins.config.ResultsConfig;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Artem Eroshenko <eroshenkoam@yandex-team.ru>
  */
-public class DslIntegrationTest {
+public class JobDslIT {
 
-    public static final String JOB_NAME = "allure";
-    public static final String SCRIPT_NAME = "allure.groovy";
+    private static final String JOB_NAME = "allure";
+    private static final String SCRIPT_NAME = "allure.groovy";
 
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
@@ -32,28 +32,27 @@ public class DslIntegrationTest {
     public void shouldCreateJobWithDsl() throws Exception {
         buildJob(SCRIPT_NAME);
 
-        assertThat(jenkins.getInstance().getJobNames(), hasItem(is(JOB_NAME)));
+        assertThat(jenkins.getInstance().getJobNames()).contains(JOB_NAME);
+
         FreeStyleProject generated = jenkins.getInstance()
                 .getItemByFullName(JOB_NAME, FreeStyleProject.class);
 
         DescribableList<Publisher, Descriptor<Publisher>> publisher = generated.getPublishersList();
 
-        assertThat("Should add step", publisher, hasSize(1));
-        assertThat("Should contains complex report publisher",
-                publisher.get(0), instanceOf(AllureReportPublisher.class));
+        assertThat(publisher).as("Should add step").hasSize(1);
+        assertThat(publisher.get(0)).as("Should contains complex report publisher")
+                .isInstanceOf(AllureReportPublisher.class);
         AllureReportPublisher allureReportPublisher = (AllureReportPublisher) publisher.get(0);
 
-        assertThat(allureReportPublisher.getConfig().getResultsPaths(),
-                hasItems("target/first-results", "target/second-results"));
+        assertThat(allureReportPublisher.getConfig().getResults()).containsExactly(
+                new ResultsConfig("target/first-results"),
+                new ResultsConfig("target/second-results")
+        );
 
-        assertThat(allureReportPublisher.getConfig().getProperties(), hasSize(1));
-        assertThat(allureReportPublisher.getConfig().getProperties().get(0).getKey(), equalTo("key"));
-        assertThat(allureReportPublisher.getConfig().getProperties().get(0).getValue(), equalTo("value"));
+        assertThat(allureReportPublisher.getConfig().getProperties()).hasSize(1)
+                .containsExactly(new PropertyConfig("key", "value"));
 
-        assertThat(allureReportPublisher.getConfig().getReportBuildPolicy(), equalTo(ReportBuildPolicy.UNSTABLE));
-        assertThat(allureReportPublisher.getConfig().getIncludeProperties(), equalTo(Boolean.TRUE));
-
-
+        assertThat(allureReportPublisher.getConfig().getIncludeProperties()).isEqualTo(Boolean.TRUE);
     }
 
     private FreeStyleProject buildJob(String script) throws Exception {

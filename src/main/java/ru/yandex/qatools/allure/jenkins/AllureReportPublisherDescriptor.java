@@ -8,12 +8,12 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import ru.yandex.qatools.allure.jenkins.config.AllureGlobalConfig;
 import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
 import ru.yandex.qatools.allure.jenkins.tools.AllureCommandlineInstallation;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,27 +22,17 @@ import java.util.List;
  * Date: 10/9/13, 7:49 PM
  */
 @Extension
+@Symbol("allure")
 public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publisher> {
 
-    private AllureGlobalConfig config;
 
     public AllureReportPublisherDescriptor() {
         super(AllureReportPublisher.class);
         load();
     }
 
-    public AllureGlobalConfig getConfig() {
-        if (config == null) {
-            config = AllureGlobalConfig.newInstance();
-        }
-        return config;
-    }
-
-    public void setConfig(AllureGlobalConfig config) {
-        this.config = config;
-    }
-
     @Override
+    @Nonnull
     public String getDisplayName() {
         return Messages.AllureReportPublisher_DisplayName();
     }
@@ -58,14 +48,8 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
         return ReportBuildPolicy.values();
     }
 
-    @Override
-    public boolean configure(StaplerRequest req, net.sf.json.JSONObject json) throws FormException {
-        req.bindJSON(config, json);
-        save();
-        return true;
-    }
-
     @SuppressWarnings("unused")
+    @Nonnull
     public FormValidation doResultsPattern(@QueryParameter("results") String results) {
         if (Strings.isNullOrEmpty(results)) {
             return FormValidation.error(Messages.AllureReportPublisher_EmptyResultsError());
@@ -79,6 +63,7 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
     }
 
     @SuppressWarnings("unused")
+    @Nonnull
     public AutoCompletionCandidates doAutoCompletePropertyKey() {
         AutoCompletionCandidates candidates = new AutoCompletionCandidates();
         candidates.add("allure.issues.tracker.pattern");
@@ -86,9 +71,12 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
         return candidates;
     }
 
+    @Nonnull
     public List<AllureCommandlineInstallation> getCommandlineInstallations() {
-        return Arrays.asList(Jenkins.getInstance().getDescriptorByType(
-                AllureCommandlineInstallation.DescriptorImpl.class).getInstallations());
+        AllureCommandlineInstallation[] installations = Jenkins.getInstance()
+                .getDescriptorByType(AllureCommandlineInstallation.DescriptorImpl.class)
+                .getInstallations();
+        return Arrays.asList(installations);
     }
 
     public AllureCommandlineInstallation getCommandlineInstallation(String name) {
@@ -106,5 +94,4 @@ public class AllureReportPublisherDescriptor extends BuildStepDescriptor<Publish
 
         return null;
     }
-
 }
