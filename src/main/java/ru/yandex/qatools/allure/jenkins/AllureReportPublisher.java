@@ -19,6 +19,7 @@ import jenkins.tasks.SimpleBuildStep;
 import jenkins.util.BuildListenerAdapter;
 import org.kohsuke.stapler.DataBoundConstructor;
 import ru.yandex.qatools.allure.jenkins.artifacts.AllureArtifactManager;
+import ru.yandex.qatools.allure.jenkins.utils.TrueZipArchiver;
 import ru.yandex.qatools.allure.jenkins.callables.AddExecutorInfo;
 import ru.yandex.qatools.allure.jenkins.callables.AddTestRunInfo;
 import ru.yandex.qatools.allure.jenkins.config.AllureReportConfig;
@@ -31,9 +32,7 @@ import ru.yandex.qatools.allure.jenkins.utils.FilePathUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -82,7 +81,7 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
         for (ResultsConfig resultsConfig : getConfig().getResults()) {
             results.add(workspace.child(resultsConfig.getPath()));
         }
-        prepareResults(results, run);
+        prepareResults(results, run, listener);
         generateReport(results, run, workspace, launcher, listener);
         copyResultsToParentIfNeeded(results, run, listener);
     }
@@ -164,14 +163,29 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
                 throw new AllurePluginException("Can not generate Allure Report, exit code: " + exitCode);
             }
 
-            reportPath.zip(reportArchive);
+            listener.getLogger().println("Allure report was successfully generated.");
+
+            archiving(reportPath, reportArchive, workspace, listener.getLogger());
+
+            listener.getLogger().println("Creating artifact for the build.");
+
             new AllureArtifactManager(run).archive(workspace, launcher, BuildListenerAdapter.wrap(listener),
                     ImmutableMap.of("allure-report.zip", reportArchive.getName()));
+
+            listener.getLogger().println("Artifact was added to the build.");
+
             run.addAction(new AllureReportBuildAction());
         } finally {
             reportArchive.delete();
             FilePathUtils.deleteRecursive(reportPath, listener.getLogger());
         }
+    }
+
+    private void archiving(FilePath reportPath, FilePath reportArchive,
+                           @Nonnull FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
+        logger.println("Creating archive for the report.");
+        workspace.archive(TrueZipArchiver.FACTORY, reportArchive.write(), reportPath.getName()+"/**");
+        logger.println("Archive for the report was successfully created.");
     }
 
     private AllureCommandlineInstallation getCommandline(@Nonnull TaskListener listener, @Nonnull EnvVars buildEnvVars)
@@ -192,9 +206,14 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
         return tool;
     }
 
-    private void prepareResults(@Nonnull List<FilePath> resultsPaths, @Nonnull Run<?, ?> run)
-            throws IOException, InterruptedException {
-        copyHistory(resultsPaths, run);
+    private void prepareResults(@Nonnull List<FilePath> resultsPaths, @Nonnull Run<?, ?> run,
+                                @Nonnull TaskListener listener) throws IOException, InterruptedException {
+        try {
+            copyHistory(resultsPaths, run);
+        } catch (Exception e) {
+            listener.getLogger().println("Cannot find a history information about previous builds.");
+            listener.getLogger().println(e);
+        }
         addTestRunInfo(resultsPaths, run);
         addExecutorInfo(resultsPaths, run);
     }
