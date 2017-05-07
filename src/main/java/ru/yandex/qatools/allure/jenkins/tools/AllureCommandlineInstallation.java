@@ -27,23 +27,26 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Artem Eroshenko <eroshenkoam@yandex-team.ru>
+ * @author Artem Eroshenko {@literal <eroshenkoam@yandex-team.ru>}
  */
 public class AllureCommandlineInstallation extends ToolInstallation
         implements EnvironmentSpecific<AllureCommandlineInstallation>, NodeSpecific<AllureCommandlineInstallation> {
+
+    private static final String CAN_FIND_ALLURE_MESSAGE = "Can't find allure commandline <%s>";
 
     @DataBoundConstructor
     public AllureCommandlineInstallation(String name, String home, List<? extends ToolProperty<?>> properties) {
         super(Util.fixEmptyAndTrim(name), Util.fixEmptyAndTrim(home), properties);
     }
 
+    @SuppressWarnings("TrailingComment")
     public String getExecutable(@Nonnull Launcher launcher) throws InterruptedException, IOException { //NOSONAR
         return launcher.getChannel().call(new MasterToSlaveCallable<String, IOException>() {
             @Override
             public String call() throws IOException {
-                Path executable = getExecutablePath();
+                final Path executable = getExecutablePath();
                 if (executable == null || Files.notExists(executable)) {
-                    throw new IOException(String.format("Can't find allure commandline <%s>", executable));
+                    throw new IOException(String.format(CAN_FIND_ALLURE_MESSAGE, executable));
                 }
                 return executable.toAbsolutePath().toString();
             }
@@ -54,9 +57,9 @@ public class AllureCommandlineInstallation extends ToolInstallation
         return launcher.getChannel().call(new MasterToSlaveCallable<String, IOException>() {
             @Override
             public String call() throws IOException {
-                Path home = getHomePath();
+                final Path home = getHomePath();
                 if (home == null || Files.notExists(home)) {
-                    throw new IOException(String.format("Can't find allure commandline <%s>", home));
+                    throw new IOException(String.format(CAN_FIND_ALLURE_MESSAGE, home));
                 }
                 return Files.exists(home.resolve("app/allure-bundle.jar")) ? "1" : "2";
             }
@@ -64,12 +67,12 @@ public class AllureCommandlineInstallation extends ToolInstallation
     }
 
     private Path getHomePath() {
-        String home = Util.replaceMacro(getHome(), EnvVars.masterEnvVars);
+        final String home = Util.replaceMacro(getHome(), EnvVars.masterEnvVars);
         return home == null ? null : Paths.get(home);
     }
 
     private Path getExecutablePath() {
-        Path home = getHomePath();
+        final Path home = getHomePath();
         return home == null ? null : home.resolve(Functions.isWindows() ? "bin/allure.bat" : "bin/allure");
     }
 
@@ -86,12 +89,15 @@ public class AllureCommandlineInstallation extends ToolInstallation
 
     @Override
     public void buildEnvVars(EnvVars env) {
-        Path home = this.getHomePath();
+        final Path home = this.getHomePath();
         if (home != null) {
             env.put("ALLURE_HOME", home.toAbsolutePath().toString());
         }
     }
 
+    /**
+     * Allure tool descriptor class that defines displayed text for allure cli installation.
+     */
     @Extension
     @Symbol("allure")
     public static class DescriptorImpl extends ToolDescriptor<AllureCommandlineInstallation> {
