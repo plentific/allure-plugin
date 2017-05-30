@@ -14,6 +14,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'de.undercouch.download'
 apply from: "${rootProject.projectDir}/gradle/jenkins.gradle"
+apply from: "${rootProject.projectDir}/gradle/release.gradle"
 
 description = 'Allure Jenkins Plugin'
 group = 'ru.yandex.qatools.allure'
