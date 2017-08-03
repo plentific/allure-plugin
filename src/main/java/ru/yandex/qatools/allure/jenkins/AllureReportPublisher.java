@@ -308,7 +308,7 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
         return tool;
     }
 
-    private void setAllureProperties(final EnvVars envVars){
+    private void setAllureProperties(final EnvVars envVars) {
         final StringBuilder options = new StringBuilder();
         Map<String, String> properties = new HashMap<>();
         //global properties
