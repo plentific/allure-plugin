@@ -78,6 +78,8 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
 
     private Boolean includeProperties;
 
+    private boolean disabled;
+
     @DataBoundConstructor
     public AllureReportPublisher(@Nonnull List<ResultsConfig> results) {
         this.results = results;
@@ -88,6 +90,15 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
             this.results = this.config.getResults();
         }
         return results;
+    }
+
+    public boolean isDisabled() {
+        return this.disabled;
+    }
+
+    @DataBoundSetter
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @DataBoundSetter
@@ -175,6 +186,10 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher,
                         @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if (this.disabled) {
+            listener.getLogger().println("Allure report is disabled.");
+            return;
+        }
         final List<FilePath> results = new ArrayList<>();
 
         final EnvVars buildEnvVars = BuildUtils.getBuildEnvVars(run, listener);
