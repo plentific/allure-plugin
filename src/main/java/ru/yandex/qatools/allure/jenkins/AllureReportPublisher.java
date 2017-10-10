@@ -1,5 +1,6 @@
 package ru.yandex.qatools.allure.jenkins;
 
+import com.google.common.base.Optional;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,6 +12,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.JDK;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
@@ -28,6 +30,7 @@ import ru.yandex.qatools.allure.jenkins.config.ReportBuildPolicy;
 import ru.yandex.qatools.allure.jenkins.config.ResultsConfig;
 import ru.yandex.qatools.allure.jenkins.exception.AllurePluginException;
 import ru.yandex.qatools.allure.jenkins.tools.AllureCommandlineInstallation;
+import ru.yandex.qatools.allure.jenkins.utils.BuildSummary;
 import ru.yandex.qatools.allure.jenkins.utils.BuildUtils;
 import ru.yandex.qatools.allure.jenkins.utils.FilePathUtils;
 import ru.yandex.qatools.allure.jenkins.utils.TrueZipArchiver;
@@ -193,7 +196,13 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
         final List<FilePath> results = new ArrayList<>();
 
         final EnvVars buildEnvVars = BuildUtils.getBuildEnvVars(run, listener);
-        for (final ResultsConfig resultsConfig : getResults()) {
+
+        List<ResultsConfig> resultsConfigs = getResults();
+        if (resultsConfigs == null) {
+            throw new AllurePluginException("The property 'Results' have to be specified!" +
+                    " Check your job's configuration.");
+        }
+        for (final ResultsConfig resultsConfig : resultsConfigs) {
             String expandedPath = buildEnvVars.expand(resultsConfig.getPath());
             results.addAll(workspace.act(new FindByGlob(expandedPath)));
         }
@@ -281,7 +290,9 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
             }
             listener.getLogger().println("Allure report was successfully generated.");
             saveAllureArtifact(run, workspace, reportPath, listener);
-            run.addAction(new AllureReportBuildAction(FilePathUtils.extractSummary(run)));
+            BuildSummary buildSummary = FilePathUtils.extractSummary(run);
+            run.addAction(new AllureReportBuildAction(buildSummary));
+            run.setResult(buildSummary.getResult());
         } finally {
             FilePathUtils.deleteRecursive(reportPath, listener.getLogger());
         }
