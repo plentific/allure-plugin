@@ -66,6 +66,8 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
 
     private AllureReportConfig config;
 
+    private String configPath;
+
     private String jdk;
 
     private String commandline;
@@ -106,6 +108,11 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
     @DataBoundSetter
     public void setConfig(final AllureReportConfig config) {
         this.config = config;
+    }
+
+    @DataBoundSetter
+    public void setConfigPath(final String configPath) {
+        this.configPath = configPath;
     }
 
     @DataBoundSetter
@@ -175,6 +182,10 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
 
     public String getReport() {
         return this.report == null ? "allure-report" : this.report;
+    }
+
+    public String getConfigPath() {
+        return configPath;
     }
 
     @Nonnull
@@ -288,10 +299,18 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
         setAllureProperties(buildEnvVars);
         configureJdk(launcher, listener, buildEnvVars);
         final AllureCommandlineInstallation commandline = getCommandline(launcher, listener, buildEnvVars);
+
         final FilePath reportPath = workspace.child(getReport());
+        FilePath configPath = null;
+
+        try {
+            configPath = workspace.child(getConfigPath());
+        } catch (NullPointerException e) {
+            configPath = null;
+        }
 
         final int exitCode = new ReportBuilder(launcher, listener, workspace, buildEnvVars, commandline)
-                .build(resultsPaths, reportPath);
+                .build(resultsPaths, reportPath, configPath);
         if (exitCode != 0) {
             throw new AllurePluginException("Can not generate Allure Report, exit code: " + exitCode);
         }
