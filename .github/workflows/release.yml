@@ -18,4 +18,4 @@ jobs:
     - name: "Maven Publish"
       run: |
         printf "userName=${{ secrets.JENKINS_USERNAME }}\npassword=${{ secrets.JENKINS_PASSWORD }}\n" > ~/.jenkins-ci.org 
-        ./mvnw publish -Pversion=${GITHUB_REF:10}
+        ./mvnw release:prepare release:perform -Pversion=${GITHUB_REF:10}
