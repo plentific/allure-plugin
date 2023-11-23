@@ -44,6 +44,8 @@ public class AllureReportConfig implements Serializable {
     @Deprecated
     private String resultsPattern;
 
+    private String archivePrefix = "";
+
     private List<PropertyConfig> properties = new ArrayList<>();
 
     private List<ResultsConfig> results;
@@ -76,6 +78,15 @@ public class AllureReportConfig implements Serializable {
 
     public String getCommandline() {
         return commandline;
+    }
+
+    @DataBoundSetter
+    public void setArchivePrefix(final String archivePrefix) {
+        this.archivePrefix = archivePrefix;
+    }
+
+    public String getArchivePrefix() {
+        return archivePrefix;
     }
 
     @Nonnull

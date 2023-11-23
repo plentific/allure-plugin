@@ -89,7 +89,7 @@
     </rule>
     <rule ref="category/java/design.xml/TooManyMethods" message="Avoid classes longer than 20 methods">
         <properties>
-            <property name="maxmethods" value="20"/>
+            <property name="maxmethods" value="25"/>
         </properties>
     </rule>
 

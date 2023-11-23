@@ -92,6 +92,8 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
 
     private List<ResultsConfig> results;
 
+    private String archivePrefix;
+
     private ReportBuildPolicy reportBuildPolicy;
 
     private Boolean includeProperties;
@@ -199,6 +201,18 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
             this.reportBuildPolicy = this.config.getReportBuildPolicy();
         }
         return reportBuildPolicy == null ? ReportBuildPolicy.ALWAYS : reportBuildPolicy;
+    }
+
+    @DataBoundSetter
+    public void setArchivePrefix(final String archivePrefix) {
+        this.archivePrefix = archivePrefix;
+    }
+
+    public String getArchivePrefix() {
+        if (this.archivePrefix == null && this.config != null) {
+            this.archivePrefix = this.config.getArchivePrefix();
+        }
+        return this.archivePrefix == null ? "" : archivePrefix;
     }
 
     @DataBoundSetter
@@ -375,7 +389,7 @@ public class AllureReportPublisher extends Recorder implements SimpleBuildStep, 
 
         Files.createDirectories(artifactsDir.toPath());
 
-        final File archive = new File(artifactsDir, REPORT_ARCHIVE_NAME);
+        final File archive = new File(artifactsDir, this.getArchivePrefix() + REPORT_ARCHIVE_NAME);
         final File tempArchive = new File(archive.getAbsolutePath() + ".writing.zip");
         final FilePath reportPath = workspace.child(getReport());
 
